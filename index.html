@@ -419,10 +419,12 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
   .footer-reach{padding-left:0;border-left:0}
 }
 .footer-bottom{
-  display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--s2);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s2);
   margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid rgba(244,238,228,.12);
   font-size:.8rem;color:var(--taupe);
 }
+.footer-bottom > span{display:inline-flex;align-items:center}
+.footer-legal button{font-size:.8rem;line-height:1;vertical-align:middle}
 
 /* ---------- scroll reveal ---------- */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
@@ -544,6 +546,13 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
 .modal-body h3{font-family:var(--display);font-weight:600;font-size:1.05rem;margin:var(--s3) 0 6px}
 .modal-body h3:first-child{margin-top:0}
 .modal-body p{font-size:.94rem;line-height:1.65;margin-bottom:var(--s2);color:#3a2c24}
+.modal-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s2);
+  padding:var(--s3) var(--s4);border-top:1px solid var(--line);flex-shrink:0;
+  font-size:.9rem;color:var(--taupe);
+}
+.modal-foot .btn{padding:8px 18px;font-size:.85rem}
+@media (max-width:640px){ .modal-foot{flex-direction:column;align-items:stretch;text-align:center} }
 .modal-body a{color:var(--gold-deep);text-decoration:underline;text-underline-offset:2px}
 .modal-body .priv-updated{font-size:.82rem;color:var(--taupe);margin-bottom:var(--s3)}
 .footer-legal{margin-top:var(--s2)}
@@ -854,8 +863,6 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
       <span>© <span id="year"></span> Eli Klo Hair Braiding. <span data-i18n="footerRights">All rights reserved.</span></span>
       <span class="footer-legal">
         <button type="button" id="openPrivacy" data-i18n="privacyLink">Privacy Policy</button>
-        <span aria-hidden="true"> · </span>
-        <button type="button" id="openCookieSettings" data-i18n="cookieSettings">Cookie settings</button>
       </span>
     </div>
   </div>
@@ -891,6 +898,10 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
     </div>
     <div class="modal-body" id="privacyBody">
       <!-- injected per language by applyLang() -->
+    </div>
+    <div class="modal-foot">
+      <span data-i18n="cookiePrefLabel">Cookie preferences</span>
+      <button type="button" class="btn btn-dark" id="openCookieSettings" data-i18n="cookieSettings">Cookie settings</button>
     </div>
   </div>
 </div>
@@ -977,7 +988,7 @@ const T = {
     footerRights:"All rights reserved.", footerCredit:"Crafted with care · EN / FR / ES",
     /* accessibility + legal */
     skipLink:"Skip to content",
-    privacyLink:"Privacy Policy", cookieSettings:"Cookie settings",
+    privacyLink:"Privacy Policy", cookieSettings:"Cookie settings", cookiePrefLabel:"Cookie preferences",
     cookieTitle:"We value your privacy",
     cookieText:"We use privacy-friendly, cookieless analytics only if you allow it, to understand how the site is used. Nothing runs until you choose.",
     cookiePolicyLink:"Privacy Policy",
@@ -1020,8 +1031,8 @@ const T = {
       or accounting requirements, then delete them.</p>
 
       <h3>Your choices and rights</h3>
-      <p>You can change or withdraw your cookie consent at any time using the "Cookie settings" link in
-      the footer. You may ask us to access, correct or delete the personal information you have shared
+      <p>You can change or withdraw your cookie consent at any time using the "Cookie settings" button at
+      the bottom of this policy. You may ask us to access, correct or delete the personal information you have shared
       with us by emailing <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a>.</p>
 
       <h3>Children</h3>
@@ -1097,7 +1108,7 @@ const T = {
     footerRights:"Tous droits réservés.", footerCredit:"Réalisé avec soin · EN / FR / ES",
     /* accessibilité + mentions légales */
     skipLink:"Aller au contenu",
-    privacyLink:"Politique de confidentialité", cookieSettings:"Préférences cookies",
+    privacyLink:"Politique de confidentialité", cookieSettings:"Préférences cookies", cookiePrefLabel:"Préférences cookies",
     cookieTitle:"Nous respectons votre vie privée",
     cookieText:"Nous utilisons une mesure d'audience respectueuse de la vie privée et sans cookies, uniquement si vous l'autorisez, pour comprendre comment le site est utilisé. Rien ne se déclenche tant que vous n'avez pas choisi.",
     cookiePolicyLink:"Politique de confidentialité",
@@ -1145,8 +1156,8 @@ const T = {
       et respecter nos obligations légales ou comptables, puis nous les supprimons.</p>
 
       <h3>Vos choix et vos droits</h3>
-      <p>Vous pouvez modifier ou retirer votre consentement aux cookies à tout moment via le lien
-      « Préférences cookies » en bas de page. Vous pouvez nous demander d'accéder aux informations
+      <p>Vous pouvez modifier ou retirer votre consentement aux cookies à tout moment via le bouton
+      « Préférences cookies » au bas de cette politique. Vous pouvez nous demander d'accéder aux informations
       personnelles que vous nous avez transmises, de les corriger ou de les supprimer en écrivant à
       <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a>.</p>
 
@@ -1223,7 +1234,7 @@ const T = {
     footerRights:"Todos los derechos reservados.", footerCredit:"Hecho con cuidado · EN / FR / ES",
     /* accesibilidad + aviso legal */
     skipLink:"Saltar al contenido",
-    privacyLink:"Política de privacidad", cookieSettings:"Preferencias de cookies",
+    privacyLink:"Política de privacidad", cookieSettings:"Preferencias de cookies", cookiePrefLabel:"Preferencias de cookies",
     cookieTitle:"Valoramos tu privacidad",
     cookieText:"Usamos una analítica respetuosa con la privacidad y sin cookies, solo si tú lo permites, para entender cómo se usa el sitio. Nada se ejecuta hasta que elijas.",
     cookiePolicyLink:"Política de privacidad",
@@ -1269,8 +1280,8 @@ const T = {
       requisitos legales o contables, y después los eliminamos.</p>
 
       <h3>Tus opciones y derechos</h3>
-      <p>Puedes cambiar o retirar tu consentimiento de cookies en cualquier momento con el enlace
-      «Preferencias de cookies» del pie de página. Puedes pedirnos acceder, corregir o eliminar la
+      <p>Puedes cambiar o retirar tu consentimiento de cookies en cualquier momento con el botón
+      «Preferencias de cookies» al final de esta política. Puedes pedirnos acceder, corregir o eliminar la
       información personal que nos hayas facilitado escribiendo a
       <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a>.</p>
 
@@ -1526,8 +1537,12 @@ document.getElementById('consentPrivacyLink').addEventListener('click', openPriv
 closePrivacyBtn.addEventListener('click', closePrivacy);
 privacyModal.addEventListener('click', e=>{ if(e.target === privacyModal) closePrivacy(); });
 
-/* footer "Cookie settings" — reopen the banner to change choice */
-document.getElementById('openCookieSettings').addEventListener('click', showConsent);
+/* "Cookie settings" (inside the privacy modal) — close it, then reopen the
+   consent banner so the visitor can change their choice */
+document.getElementById('openCookieSettings').addEventListener('click', ()=>{
+  closePrivacy();
+  setTimeout(showConsent, 320);   // wait for the modal close transition
+});
 </script>
 </body>
 </html>
