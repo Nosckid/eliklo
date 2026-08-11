@@ -453,9 +453,112 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
     pointer-events:none;transition:opacity .4s var(--ease);z-index:55}
   body.menu-open .nav-menu-backdrop{opacity:1;pointer-events:auto}
 }
+
+/* =========================================================================
+   ACCESSIBILITY — skip link + screen-reader utility
+   ========================================================================= */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+.skip-link{
+  position:fixed;top:8px;left:8px;z-index:200;
+  background:var(--espresso);color:var(--porcelain);
+  padding:10px 18px;border-radius:10px;font-weight:600;
+  font-family:var(--body);text-decoration:none;
+  transform:translateY(-160%);transition:transform .25s var(--ease);
+}
+.skip-link:focus-visible{transform:translateY(0);outline:2px solid var(--gold);outline-offset:3px}
+
+/* =========================================================================
+   COOKIE CONSENT BANNER
+   Cookieless Cloudflare analytics only loads after "Accept".
+   ========================================================================= */
+.consent{
+  position:fixed;left:0;right:0;bottom:0;z-index:120;
+  padding:var(--s3);
+  display:flex;justify-content:center;
+  transform:translateY(120%);transition:transform .45s var(--ease);
+  pointer-events:none;
+}
+.consent.show{transform:translateY(0);pointer-events:auto}
+.consent-card{
+  width:min(760px,100%);
+  background:var(--espresso);color:var(--porcelain);
+  border:1px solid rgba(198,161,91,.35);
+  border-radius:var(--radius);
+  box-shadow:0 18px 50px rgba(20,14,11,.45);
+  padding:var(--s3) var(--s4);
+  display:grid;grid-template-columns:1fr auto;gap:var(--s3) var(--s4);align-items:center;
+}
+.consent-card h2{
+  font-family:var(--display);font-weight:600;font-size:1.1rem;margin-bottom:6px;color:var(--gold-lite);
+}
+.consent-card p{font-size:.92rem;line-height:1.55;color:rgba(244,238,228,.85)}
+.consent-card a,.linklike{color:var(--gold-lite);text-decoration:underline;text-underline-offset:2px}
+.linklike{background:transparent;border:0;padding:0;cursor:pointer;font:inherit}
+.consent-actions{display:flex;gap:var(--s2);flex-shrink:0}
+.consent-actions .btn{white-space:nowrap}
+.btn-outline-lite{
+  background:transparent;color:var(--porcelain);
+  border:1.5px solid rgba(244,238,228,.5);
+}
+.btn-outline-lite:hover{border-color:var(--gold-lite);color:var(--gold-lite)}
+@media (max-width:640px){
+  .consent{padding:var(--s2)}
+  .consent-card{grid-template-columns:1fr;padding:var(--s3)}
+  .consent-actions{flex-direction:column-reverse}
+  .consent-actions .btn{width:100%;text-align:center}
+}
+
+/* =========================================================================
+   PRIVACY POLICY MODAL (accessible dialog)
+   ========================================================================= */
+.modal{
+  position:fixed;inset:0;z-index:150;
+  display:flex;align-items:center;justify-content:center;
+  padding:var(--s3);
+  background:rgba(20,14,11,.6);backdrop-filter:blur(3px);
+  opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility .3s var(--ease);
+}
+.modal.open{opacity:1;visibility:visible}
+.modal-card{
+  width:min(720px,100%);max-height:85vh;overflow:hidden;
+  background:var(--porcelain);color:var(--espresso);
+  border-radius:var(--radius);box-shadow:0 24px 70px rgba(20,14,11,.5);
+  display:flex;flex-direction:column;
+  transform:translateY(16px);transition:transform .3s var(--ease);
+}
+.modal.open .modal-card{transform:translateY(0)}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s2);
+  padding:var(--s3) var(--s4);border-bottom:1px solid var(--line);
+}
+.modal-head h2{font-family:var(--display);font-weight:600;font-size:1.5rem}
+.modal-close{
+  background:transparent;border:0;cursor:pointer;
+  font-size:1.6rem;line-height:1;color:var(--taupe);padding:6px;border-radius:8px;
+}
+.modal-close:hover{color:var(--espresso)}
+.modal-body{padding:var(--s4);overflow-y:auto}
+.modal-body h3{font-family:var(--display);font-weight:600;font-size:1.05rem;margin:var(--s3) 0 6px}
+.modal-body h3:first-child{margin-top:0}
+.modal-body p{font-size:.94rem;line-height:1.65;margin-bottom:var(--s2);color:#3a2c24}
+.modal-body a{color:var(--gold-deep);text-decoration:underline;text-underline-offset:2px}
+.modal-body .priv-updated{font-size:.82rem;color:var(--taupe);margin-bottom:var(--s3)}
+.footer-legal{margin-top:var(--s2)}
+.footer-legal button{
+  background:transparent;border:0;cursor:pointer;color:inherit;font:inherit;
+  text-decoration:underline;text-underline-offset:2px;padding:0;opacity:.85;
+}
+.footer-legal button:hover{opacity:1;color:var(--gold-lite)}
+@media (max-width:640px){
+  .modal-body,.modal-head{padding:var(--s3)}
+}
 </style>
 </head>
 <body>
+<a href="#main" class="skip-link" data-i18n="skipLink">Skip to content</a>
 
 <!-- ====================== HEADER ====================== -->
 <header class="header" id="header">
@@ -481,7 +584,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
         <button data-lang="es" aria-pressed="false">ES</button>
       </div>
       <a href="#contact" class="btn btn-primary header-book" data-i18n="navBook">Book Now</a>
-      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -489,6 +592,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
 </header>
 <div class="nav-menu-backdrop" id="menuBackdrop"></div>
 
+<main id="main">
 <!-- ====================== HERO ====================== -->
 <section class="hero" id="home">
   <div class="hero-copy">
@@ -714,6 +818,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
     </div>
   </div>
 </section>
+</main>
 
 <!-- ====================== FOOTER ====================== -->
 <footer class="footer">
@@ -747,10 +852,49 @@ h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;letter-spac
     </div>
     <div class="footer-bottom">
       <span>© <span id="year"></span> Eli Klo Hair Braiding. <span data-i18n="footerRights">All rights reserved.</span></span>
+      <span class="footer-legal">
+        <button type="button" id="openPrivacy" data-i18n="privacyLink">Privacy Policy</button>
+        <span aria-hidden="true"> · </span>
+        <button type="button" id="openCookieSettings" data-i18n="cookieSettings">Cookie settings</button>
+      </span>
       <span data-i18n="footerCredit">Crafted with care · EN / FR / ES</span>
     </div>
   </div>
 </footer>
+
+<!-- ====================== COOKIE CONSENT BANNER ====================== -->
+<div class="consent" id="consent" role="dialog" aria-modal="false"
+     aria-labelledby="consentTitle" aria-describedby="consentText" hidden>
+  <div class="consent-card">
+    <div>
+      <h2 id="consentTitle" data-i18n="cookieTitle">We value your privacy</h2>
+      <p id="consentText">
+        <span data-i18n="cookieText">We use privacy-friendly, cookieless analytics only if you allow it,
+        to understand how the site is used. Nothing runs until you choose.</span>
+        <button type="button" class="linklike" id="consentPrivacyLink" data-i18n="cookiePolicyLink">Privacy Policy</button>
+      </p>
+    </div>
+    <div class="consent-actions">
+      <button type="button" class="btn btn-outline-lite" id="declineCookies" data-i18n="cookieDecline">Decline</button>
+      <button type="button" class="btn btn-primary" id="acceptCookies" data-i18n="cookieAccept">Accept</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== PRIVACY POLICY MODAL ====================== -->
+<div class="modal" id="privacyModal" role="dialog" aria-modal="true"
+     aria-labelledby="privacyTitle" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="privacyTitle" data-i18n="privacyTitle">Privacy Policy</h2>
+      <button type="button" class="modal-close" id="closePrivacy"
+              aria-label="Close" data-i18n-aria="privacyCloseAria">&times;</button>
+    </div>
+    <div class="modal-body" id="privacyBody">
+      <!-- injected per language by applyLang() -->
+    </div>
+  </div>
+</div>
 
 <script>
 /* =========================================================================
@@ -832,6 +976,62 @@ const T = {
     footerExplore:"Explore", footerReach:"Reach us", footerArea:"206A South Main, Quanah, TX 79252",
     footerHoursWeek:"Mon–Sat · 9:00 AM – 5:00 PM", footerHoursSun:"Sun · 12:00 – 5:00 PM",
     footerRights:"All rights reserved.", footerCredit:"Crafted with care · EN / FR / ES",
+    /* accessibility + legal */
+    skipLink:"Skip to content",
+    privacyLink:"Privacy Policy", cookieSettings:"Cookie settings",
+    cookieTitle:"We value your privacy",
+    cookieText:"We use privacy-friendly, cookieless analytics only if you allow it, to understand how the site is used. Nothing runs until you choose.",
+    cookiePolicyLink:"Privacy Policy",
+    cookieAccept:"Accept", cookieDecline:"Decline",
+    privacyTitle:"Privacy Policy", privacyCloseAria:"Close privacy policy",
+    _privacyHTML:`
+      <p class="priv-updated">Last updated: 11 August 2026</p>
+      <p>Eli Klo Hair Braiding ("we", "us") respects your privacy. This policy explains what
+      information we handle when you visit our website or contact us, and the choices you have.</p>
+
+      <h3>Who we are</h3>
+      <p>Eli Klo Hair Braiding, 206A South Main, Quanah, Texas 79252, USA.
+      Email: <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a> ·
+      Phone: <a href="tel:+12547688904">+1&nbsp;254&nbsp;768&nbsp;8904</a>.</p>
+
+      <h3>Information we collect</h3>
+      <p>Our website has no booking form or online payment. If you call, text or email us, we
+      receive the contact details and message you choose to send, and use them only to answer you
+      and arrange an appointment. Our hosting provider automatically logs standard technical data
+      (such as your IP address and browser type) to keep the site secure and running.</p>
+
+      <h3>Cookies and analytics</h3>
+      <p>We do not use advertising or tracking cookies. With your consent, we load Cloudflare Web
+      Analytics — a privacy-first, cookieless tool that gives us anonymous, aggregated visit counts
+      and never identifies you or follows you across sites. If you decline, no analytics are loaded.
+      Your language and consent choices are stored on your own device (in local storage) so the site
+      remembers your preference; this data never leaves your browser.</p>
+
+      <h3>How we use information</h3>
+      <p>To respond to enquiries, schedule appointments, keep the website secure, and — only with your
+      consent — understand overall site usage so we can improve it. We do not sell your information.</p>
+
+      <h3>Sharing</h3>
+      <p>We share information only with service providers that help us run the site (our website host,
+      Cloudflare for security and optional analytics, and Google Fonts for typography). The Google Maps
+      link to our address opens Google's own service, governed by Google's privacy policy.</p>
+
+      <h3>Retention</h3>
+      <p>We keep messages and appointment details only as long as needed to serve you and meet legal
+      or accounting requirements, then delete them.</p>
+
+      <h3>Your choices and rights</h3>
+      <p>You can change or withdraw your cookie consent at any time using the "Cookie settings" link in
+      the footer. You may ask us to access, correct or delete the personal information you have shared
+      with us by emailing <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a>.</p>
+
+      <h3>Children</h3>
+      <p>Our website is not directed to children under 13, and we do not knowingly collect their data.</p>
+
+      <h3>Changes</h3>
+      <p>We may update this policy from time to time. The "last updated" date above shows the current
+      version.</p>
+    `,
     /* alt text */
     altHero:"A client's feed-in braids swept into a sculpted high bun, seen in profile.",
     altAbout:"A copper-toned feed-in braid finished in an elegant coiled updo.",
@@ -896,6 +1096,69 @@ const T = {
     footerExplore:"Explorer", footerReach:"Nous joindre", footerArea:"206A South Main, Quanah, TX 79252",
     footerHoursWeek:"Lun–Sam · 9h00 – 17h00", footerHoursSun:"Dim · 12h00 – 17h00",
     footerRights:"Tous droits réservés.", footerCredit:"Réalisé avec soin · EN / FR / ES",
+    /* accessibilité + mentions légales */
+    skipLink:"Aller au contenu",
+    privacyLink:"Politique de confidentialité", cookieSettings:"Préférences cookies",
+    cookieTitle:"Nous respectons votre vie privée",
+    cookieText:"Nous utilisons une mesure d'audience respectueuse de la vie privée et sans cookies, uniquement si vous l'autorisez, pour comprendre comment le site est utilisé. Rien ne se déclenche tant que vous n'avez pas choisi.",
+    cookiePolicyLink:"Politique de confidentialité",
+    cookieAccept:"Accepter", cookieDecline:"Refuser",
+    privacyTitle:"Politique de confidentialité", privacyCloseAria:"Fermer la politique de confidentialité",
+    _privacyHTML:`
+      <p class="priv-updated">Dernière mise à jour : 11 août 2026</p>
+      <p>Eli Klo Hair Braiding (« nous ») respecte votre vie privée. Cette politique explique quelles
+      informations nous traitons lorsque vous visitez notre site ou nous contactez, ainsi que les choix
+      dont vous disposez.</p>
+
+      <h3>Qui sommes-nous</h3>
+      <p>Eli Klo Hair Braiding, 206A South Main, Quanah, Texas 79252, États-Unis.
+      Courriel : <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a> ·
+      Téléphone : <a href="tel:+12547688904">+1&nbsp;254&nbsp;768&nbsp;8904</a>.</p>
+
+      <h3>Informations que nous collectons</h3>
+      <p>Notre site ne comporte ni formulaire de réservation ni paiement en ligne. Si vous nous appelez,
+      nous écrivez par texto ou par courriel, nous recevons les coordonnées et le message que vous
+      choisissez d'envoyer, et nous les utilisons uniquement pour vous répondre et convenir d'un
+      rendez-vous. Notre hébergeur enregistre automatiquement des données techniques standard (comme
+      votre adresse IP et votre navigateur) afin d'assurer la sécurité et le bon fonctionnement du site.</p>
+
+      <h3>Cookies et mesure d'audience</h3>
+      <p>Nous n'utilisons aucun cookie publicitaire ou de suivi. Avec votre consentement, nous chargeons
+      Cloudflare Web Analytics — un outil sans cookies et respectueux de la vie privée qui nous fournit
+      des statistiques de visites anonymes et agrégées, sans jamais vous identifier ni vous suivre d'un
+      site à l'autre. Si vous refusez, aucune mesure d'audience n'est chargée. Vos choix de langue et de
+      consentement sont enregistrés sur votre propre appareil (stockage local) afin que le site retienne
+      votre préférence ; ces données ne quittent jamais votre navigateur.</p>
+
+      <h3>Comment nous utilisons les informations</h3>
+      <p>Pour répondre à vos demandes, planifier les rendez-vous, sécuriser le site et — uniquement avec
+      votre consentement — comprendre l'utilisation globale du site afin de l'améliorer. Nous ne vendons
+      pas vos informations.</p>
+
+      <h3>Partage</h3>
+      <p>Nous ne partageons vos informations qu'avec les prestataires qui nous aident à faire fonctionner
+      le site (notre hébergeur, Cloudflare pour la sécurité et la mesure d'audience facultative, et Google
+      Fonts pour la typographie). Le lien Google Maps vers notre adresse ouvre le service de Google, régi
+      par la politique de confidentialité de Google.</p>
+
+      <h3>Conservation</h3>
+      <p>Nous ne conservons vos messages et détails de rendez-vous que le temps nécessaire pour vous servir
+      et respecter nos obligations légales ou comptables, puis nous les supprimons.</p>
+
+      <h3>Vos choix et vos droits</h3>
+      <p>Vous pouvez modifier ou retirer votre consentement aux cookies à tout moment via le lien
+      « Préférences cookies » en bas de page. Vous pouvez nous demander d'accéder aux informations
+      personnelles que vous nous avez transmises, de les corriger ou de les supprimer en écrivant à
+      <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a>.</p>
+
+      <h3>Enfants</h3>
+      <p>Notre site ne s'adresse pas aux enfants de moins de 13 ans et nous ne collectons pas sciemment
+      leurs données.</p>
+
+      <h3>Modifications</h3>
+      <p>Nous pouvons mettre à jour cette politique de temps à autre. La date de « dernière mise à jour »
+      ci-dessus indique la version en vigueur.</p>
+    `,
     altHero:"Les tresses feed-in d'une cliente relevées en un chignon sculpté, vues de profil.",
     altAbout:"Une tresse feed-in cuivrée terminée en un chignon enroulé élégant.",
     altLogo:"Logo Eli Klo Hair Braiding.",
@@ -959,6 +1222,66 @@ const T = {
     footerExplore:"Explorar", footerReach:"Contáctanos", footerArea:"206A South Main, Quanah, TX 79252",
     footerHoursWeek:"Lun–Sáb · 9:00 – 17:00", footerHoursSun:"Dom · 12:00 – 17:00",
     footerRights:"Todos los derechos reservados.", footerCredit:"Hecho con cuidado · EN / FR / ES",
+    /* accesibilidad + aviso legal */
+    skipLink:"Saltar al contenido",
+    privacyLink:"Política de privacidad", cookieSettings:"Preferencias de cookies",
+    cookieTitle:"Valoramos tu privacidad",
+    cookieText:"Usamos una analítica respetuosa con la privacidad y sin cookies, solo si tú lo permites, para entender cómo se usa el sitio. Nada se ejecuta hasta que elijas.",
+    cookiePolicyLink:"Política de privacidad",
+    cookieAccept:"Aceptar", cookieDecline:"Rechazar",
+    privacyTitle:"Política de privacidad", privacyCloseAria:"Cerrar la política de privacidad",
+    _privacyHTML:`
+      <p class="priv-updated">Última actualización: 11 de agosto de 2026</p>
+      <p>Eli Klo Hair Braiding («nosotros») respeta tu privacidad. Esta política explica qué
+      información tratamos cuando visitas nuestro sitio web o nos contactas, y las opciones que tienes.</p>
+
+      <h3>Quiénes somos</h3>
+      <p>Eli Klo Hair Braiding, 206A South Main, Quanah, Texas 79252, EE. UU.
+      Correo: <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a> ·
+      Teléfono: <a href="tel:+12547688904">+1&nbsp;254&nbsp;768&nbsp;8904</a>.</p>
+
+      <h3>Información que recopilamos</h3>
+      <p>Nuestro sitio no tiene formulario de reserva ni pago en línea. Si nos llamas, nos escribes por
+      mensaje o por correo, recibimos los datos de contacto y el mensaje que decidas enviar, y los usamos
+      únicamente para responderte y concertar una cita. Nuestro proveedor de alojamiento registra
+      automáticamente datos técnicos estándar (como tu dirección IP y tu navegador) para mantener el
+      sitio seguro y en funcionamiento.</p>
+
+      <h3>Cookies y analítica</h3>
+      <p>No usamos cookies publicitarias ni de seguimiento. Con tu consentimiento, cargamos Cloudflare
+      Web Analytics — una herramienta sin cookies y centrada en la privacidad que nos ofrece recuentos
+      de visitas anónimos y agregados, sin identificarte nunca ni seguirte entre sitios. Si lo rechazas,
+      no se carga ninguna analítica. Tus preferencias de idioma y de consentimiento se guardan en tu
+      propio dispositivo (almacenamiento local) para que el sitio recuerde tu elección; estos datos nunca
+      salen de tu navegador.</p>
+
+      <h3>Cómo usamos la información</h3>
+      <p>Para responder a tus consultas, agendar citas, mantener el sitio seguro y — solo con tu
+      consentimiento — entender el uso general del sitio para mejorarlo. No vendemos tu información.</p>
+
+      <h3>Compartir</h3>
+      <p>Solo compartimos información con los proveedores que nos ayudan a operar el sitio (nuestro
+      alojamiento web, Cloudflare para seguridad y analítica opcional, y Google Fonts para la tipografía).
+      El enlace de Google Maps a nuestra dirección abre el servicio propio de Google, regido por la
+      política de privacidad de Google.</p>
+
+      <h3>Conservación</h3>
+      <p>Conservamos los mensajes y detalles de las citas solo el tiempo necesario para atenderte y cumplir
+      requisitos legales o contables, y después los eliminamos.</p>
+
+      <h3>Tus opciones y derechos</h3>
+      <p>Puedes cambiar o retirar tu consentimiento de cookies en cualquier momento con el enlace
+      «Preferencias de cookies» del pie de página. Puedes pedirnos acceder, corregir o eliminar la
+      información personal que nos hayas facilitado escribiendo a
+      <a href="mailto:Eliklohairbraiding@gmail.com">Eliklohairbraiding@gmail.com</a>.</p>
+
+      <h3>Menores</h3>
+      <p>Nuestro sitio no está dirigido a menores de 13 años y no recopilamos sus datos de forma consciente.</p>
+
+      <h3>Cambios</h3>
+      <p>Podemos actualizar esta política de vez en cuando. La fecha de «última actualización» de arriba
+      indica la versión vigente.</p>
+    `,
     altHero:"Las trenzas feed-in de una clienta recogidas en un moño alto esculpido, de perfil.",
     altAbout:"Una trenza feed-in cobriza rematada en un elegante moño enrollado.",
     altLogo:"Logotipo de Eli Klo Hair Braiding.",
@@ -1013,6 +1336,14 @@ function applyLang(lang){
     const k = el.getAttribute('data-i18n-alt');
     if(dict[k] !== undefined) el.setAttribute('alt', dict[k]);
   });
+  // translated aria-labels (e.g. modal close button)
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+    const k = el.getAttribute('data-i18n-aria');
+    if(dict[k] !== undefined) el.setAttribute('aria-label', dict[k]);
+  });
+  // privacy policy body (rich HTML, one string per language)
+  const pb = document.getElementById('privacyBody');
+  if(pb && dict._privacyHTML !== undefined) pb.innerHTML = dict._privacyHTML;
 
   document.querySelectorAll('.lang button').forEach(b=>{
     const on = b.dataset.lang === lang;
@@ -1108,6 +1439,96 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     window.scrollTo({top, behavior:'smooth'});
   });
 });
+
+/* =========================================================================
+   COOKIE CONSENT + PRIVACY-FIRST ANALYTICS
+   - Choice stored in localStorage ("granted" | "denied").
+   - Cloudflare Web Analytics (cookieless) loads ONLY after "Accept".
+   - Visitor can change their mind any time via the footer "Cookie settings".
+   ========================================================================= */
+
+/* 👉 EDIT THIS: paste your Cloudflare Web Analytics token to enable analytics.
+   Find it in Cloudflare dashboard → Analytics & Logs → Web Analytics.
+   Until a token is set, "Accept" simply records consent and loads nothing. */
+const CF_BEACON_TOKEN = "";
+
+const CONSENT_KEY = "eliklo_consent";
+const consentEl  = document.getElementById('consent');
+const acceptBtn  = document.getElementById('acceptCookies');
+const declineBtn = document.getElementById('declineCookies');
+
+let cfLoaded = false;
+function loadCloudflareAnalytics(){
+  if(cfLoaded || !CF_BEACON_TOKEN) return;        // no token → nothing loads
+  cfLoaded = true;
+  const s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute('data-cf-beacon', JSON.stringify({ token: CF_BEACON_TOKEN }));
+  document.head.appendChild(s);
+}
+
+function showConsent(){ consentEl.hidden = false; requestAnimationFrame(()=>consentEl.classList.add('show')); }
+function hideConsent(){ consentEl.classList.remove('show'); setTimeout(()=>{ consentEl.hidden = true; }, 450); }
+
+function setConsent(value){
+  try{ localStorage.setItem(CONSENT_KEY, value); }catch(e){}
+  hideConsent();
+  if(value === 'granted') loadCloudflareAnalytics();
+}
+
+acceptBtn.addEventListener('click', ()=>setConsent('granted'));
+declineBtn.addEventListener('click',()=>setConsent('denied'));
+
+/* on load: honour a stored choice, otherwise ask */
+(function initConsent(){
+  let stored = null;
+  try{ stored = localStorage.getItem(CONSENT_KEY); }catch(e){}
+  if(stored === 'granted'){ loadCloudflareAnalytics(); }
+  else if(stored === 'denied'){ /* stay quiet */ }
+  else { showConsent(); }
+})();
+
+/* =========================================================================
+   PRIVACY POLICY MODAL — accessible dialog with focus handling
+   ========================================================================= */
+const privacyModal = document.getElementById('privacyModal');
+const closePrivacyBtn = document.getElementById('closePrivacy');
+let lastFocused = null;
+
+function openPrivacy(){
+  lastFocused = document.activeElement;
+  privacyModal.hidden = false;
+  requestAnimationFrame(()=>privacyModal.classList.add('open'));
+  document.body.style.overflow = 'hidden';
+  closePrivacyBtn.focus();
+  document.addEventListener('keydown', privacyKeydown);
+}
+function closePrivacy(){
+  privacyModal.classList.remove('open');
+  document.body.style.overflow = '';
+  document.removeEventListener('keydown', privacyKeydown);
+  setTimeout(()=>{ privacyModal.hidden = true; }, 300);
+  if(lastFocused && lastFocused.focus) lastFocused.focus();
+}
+function privacyKeydown(e){
+  if(e.key === 'Escape'){ closePrivacy(); return; }
+  if(e.key === 'Tab'){                         // simple focus trap
+    const f = privacyModal.querySelectorAll('a[href], button:not([disabled])');
+    if(!f.length) return;
+    const first = f[0], last = f[f.length-1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+}
+
+document.getElementById('openPrivacy').addEventListener('click', openPrivacy);
+document.getElementById('consentPrivacyLink').addEventListener('click', openPrivacy);
+closePrivacyBtn.addEventListener('click', closePrivacy);
+privacyModal.addEventListener('click', e=>{ if(e.target === privacyModal) closePrivacy(); });
+
+/* footer "Cookie settings" — reopen the banner to change choice */
+document.getElementById('openCookieSettings').addEventListener('click', showConsent);
 </script>
 </body>
 </html>
