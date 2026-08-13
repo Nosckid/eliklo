@@ -1,0 +1,6 @@
+# Eli Klo Hair Braiding — robots.txt
+# Allow all reputable crawlers full access.
+User-agent: *
+Allow: /
+
+Sitemap: https://eliklo.pages.dev/sitemap.xml
